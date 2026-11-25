@@ -1,0 +1,5 @@
+# Visits made to check the game rather than to play it. tools/analyze.js leaves these out.
+mwtqri5x2hx   # 2026-11-23 first check of the relay: idle fall on level 1, background tab
+mwtrl56ywrb   # 2026-11-23 check of the feedback form: one test note, no runs
+mwtsih0z6ki   # 2026-11-23 check of the performance fields: idle fall, background tab
+mwtt85o9q5h   # 2026-11-23 check of the engine id and checksum: idle fall, background tab

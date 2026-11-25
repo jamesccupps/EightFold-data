@@ -1,0 +1,45 @@
+# Checks the scores players post and builds the leaderboards.
+# The relay files each posted run under scores/. This plays every new one back on the real engine (tools/boards.js on
+# the main branch of jamesccupps/EightFold) and writes boards/all.json, which the game reads through the relay.
+name: boards
+on:
+  push:
+    branches: [main]
+    paths: ['scores/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: boards
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: data
+      - uses: actions/checkout@v5
+        with:
+          repository: jamesccupps/EightFold
+          ref: main
+          path: code
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: play the posted runs back and build the boards
+        run: node code/tools/boards.js data
+      - name: file the boards
+        working-directory: data
+        run: |
+          git config user.name eightfold-boards
+          git config user.email eightfold-boards@users.noreply.github.com
+          git add boards
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -q -m "boards"
+          for i in 1 2 3 4 5; do
+            if git push -q; then exit 0; fi
+            git pull -q --rebase
+          done
+          exit 1
